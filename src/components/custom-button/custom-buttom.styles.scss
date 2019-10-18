@@ -9,7 +9,7 @@
   background-color: black;
   color: white;
   text-transform: uppercase;
-  font-family: 'Open Sans Condensed';
+  font-family: 'Open Sans Condensed', sans-serif;
   font-weight: bolder;
   border: none;
   cursor: pointer;
@@ -18,5 +18,21 @@
     background-color: white;
     color: black;
     border: 1px solid black;
+  }
+
+  &.color-blue {
+    background: #4285f4;
+    color: #fff;
+    
+    &:hover {
+      background: darken(#4285f4, 5%);
+      border: none;
+    }
+  }
+
+  &.block {
+    display: flex;
+    margin-bottom: 10px;
+    justify-content: center;
   }
 }

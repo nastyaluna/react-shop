@@ -18,7 +18,6 @@ function App() {
 
     unsubscribeFromAuth = auth.onAuthStateChanged(googleUser => {
       setUser(googleUser);
-      console.log('App', user);
     });
 
     return () => unsubscribeFromAuth();
@@ -28,7 +27,10 @@ function App() {
       <section className="app">
         <Header user={user}/>
         <Switch>
-          <Route exact path='/' component={HomePage} />
+          <Route
+              exact path='/'
+              component={user ? HomePage : SignInAndSignUpPage}
+          />
           <Route path='/shop' component={ShopPage} />
           <Route path='/signin' component={SignInAndSignUpPage} />
         </Switch>
