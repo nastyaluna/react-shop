@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { auth } from '../../firebase/firebase.utils';
 import { ReactComponent as Logo } from '../../assets/crown.svg';
 
 import './header.styles.scss';
 
 const Header = ({ user }) => {
+  const { pathname } = useLocation();
   return (
       <div className='header'>
         <Link className='logo-container' to='/'>
@@ -19,16 +20,17 @@ const Header = ({ user }) => {
             CONTACT
           </Link>
 
-          {!user && (
-            <Link className='option' to='/auth'>
-              SIGN IN
-            </Link>
-          )}
-          {user && (
+          {!user ? (
+            pathname !== '/auth' && (
+              <Link className='option' to='/auth'>
+                  LOGIN
+              </Link>
+            )
+          ) : (
             <div className="option" onClick={() => auth.signOut()}>
-              SIGN OUT
+              LOGOUT
             </div>
-          )}
+            )}
         </div>
       </div>
   )
