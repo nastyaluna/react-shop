@@ -1,92 +1,65 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import  { connect } from 'react-redux';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
-
-import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
-
+import { register } from '../../redux/user/user.actions';
 import './sign-up.styles.scss';
 
-class SignUp extends React.Component {
-  state = {
-    email: '',
-    password: '',
-    confirmPassword: ''
+const SignUp = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmedPassword, setConfirmedPassword] = useState('');
+
+  const resetState = () => {
+    setEmail('');
+    setPassword('');
+    setConfirmedPassword('');
   };
 
-  resetState = () => {
-    this.setState({
-      email: '',
-      password: '',
-      confirmPassword: ''
-    });
-  };
-
-  handleSubmit = async event => {
+  const handleSubmit = async event => {
     event.preventDefault();
 
-    const { email, password, confirmPassword } = this.state;
-
-    if (password !== confirmPassword) {
+    if (password !== confirmedPassword) {
       alert("Passwords don't match");
       return;
     }
 
-    try {
-      const { user } = await auth.createUserWithEmailAndPassword(
-          email,
-          password
-      );
-
-      await createUserProfileDocument(user, { email });
-
-      this.resetState();
-    } catch (error) {
-      console.error(error);
-    }
+    const authorized = await register(email, password, confirmedPassword);
+    if (authorized) resetState();
   };
 
-  handleChange = event => {
-    const { name, value } = event.target;
+  return (
+      <div className='sign-up'>
+        <h2 className='title'>Register</h2>
+        <form className='sign-up-form' onSubmit={handleSubmit}>
+          <FormInput
+              type='email'
+              name='email'
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              label='Email'
+              required
+          />
+          <FormInput
+              type='password'
+              name='password'
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              label='Password'
+              required
+          />
+          <FormInput
+              type='password'
+              name='confirmPassword'
+              value={confirmedPassword}
+              onChange={e => setConfirmedPassword(e.target.value)}
+              label='Confirm Password'
+              required
+          />
+          <CustomButton type='submit'>DONE</CustomButton>
+        </form>
+      </div>
+  );
+};
 
-    this.setState({ [name]: value });
-  };
-
-  render() {
-    const { email, password, confirmPassword } = this.state;
-    return (
-        <div className='sign-up'>
-          <h2 className='title'>Register</h2>
-          <form className='sign-up-form' onSubmit={this.handleSubmit}>
-            <FormInput
-                type='email'
-                name='email'
-                value={email}
-                onChange={this.handleChange}
-                label='Email'
-                required
-            />
-            <FormInput
-                type='password'
-                name='password'
-                value={password}
-                onChange={this.handleChange}
-                label='Password'
-                required
-            />
-            <FormInput
-                type='password'
-                name='confirmPassword'
-                value={confirmPassword}
-                onChange={this.handleChange}
-                label='Confirm Password'
-                required
-            />
-            <CustomButton type='submit'>DONE</CustomButton>
-          </form>
-        </div>
-    );
-  }
-}
-
-export default SignUp;
+export default connect(null, { register })(SignUp);
