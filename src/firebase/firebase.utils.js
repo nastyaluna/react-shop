@@ -38,12 +38,11 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 
   // если не находим в базе юзера, создаем нового
   if(!snapShot.exists) {
-    const { displayName, email } = userAuth;
+    const { email } = userAuth;
     const createdAt = new Date();
 
     try {
       await userRef.set({
-        displayName,
         email,
         createdAt,
         ...additionalData

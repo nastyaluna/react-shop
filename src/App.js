@@ -15,9 +15,9 @@ function App() {
   useEffect(() => {
     let unsubscribe = null;
 
-    unsubscribe = auth.onAuthStateChanged(async googleUser => {
-      if (googleUser) {
-        const userRef = await createUserProfileDocument(googleUser);
+    unsubscribe = auth.onAuthStateChanged(async authUser => {
+      if (authUser) {
+        const userRef = await createUserProfileDocument(authUser);
 
         userRef.onSnapshot(snapShot => {
           if (snapShot) {
@@ -40,12 +40,13 @@ function App() {
       <section className="app">
         <Header user={user}/>
         <Switch>
-          <Route
-              exact path='/'
-              component={user ? HomePage : SignInAndSignUpPage}
-          />
+          <Route exact path='/'>
+            <HomePage user={user}/>
+          </Route>
           <Route path='/shop' component={ShopPage} />
-          <Route path='/signin' component={SignInAndSignUpPage} />
+          <Route path='/auth'>
+            <SignInAndSignUpPage user={user}/>
+          </Route>
         </Switch>
       </section>
   );

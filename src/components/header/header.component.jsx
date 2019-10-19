@@ -2,13 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase/firebase.utils';
 import { ReactComponent as Logo } from '../../assets/crown.svg';
-import { useLocation } from 'react-router-dom';
 
 import './header.styles.scss';
 
 const Header = ({ user }) => {
-  const location = useLocation();
-
   return (
       <div className='header'>
         <Link className='logo-container' to='/'>
@@ -21,8 +18,9 @@ const Header = ({ user }) => {
           <Link className='option' to='/shop'>
             CONTACT
           </Link>
-          {!user && location.pathname !== '/' && (
-            <Link className='option' to='/signin'>
+
+          {!user && (
+            <Link className='option' to='/auth'>
               SIGN IN
             </Link>
           )}
