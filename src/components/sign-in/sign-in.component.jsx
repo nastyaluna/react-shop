@@ -51,8 +51,4 @@ const SignIn = ({ login }) => {
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  login: (email, password) => dispatch(login(email, password))
-});
-
-export default connect(null, mapDispatchToProps)(SignIn);
+export default connect(null, { login })(SignIn);
