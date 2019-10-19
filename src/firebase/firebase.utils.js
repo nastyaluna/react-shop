@@ -18,11 +18,42 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
+
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({
   prompt: 'select_account'
 });
 
+
 export const signInWithGoogle = () => auth.signInWithPopup(provider);
+
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+  if(!userAuth) return;
+
+  // приходит uid юзера
+  const userRef = firestore.doc(`users/${userAuth.uid}`);
+
+  // ищем в базе юзера с таким id
+  const snapShot = await userRef.get();
+
+  // если не находим в базе юзера, создаем нового
+  if(!snapShot.exists) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await userRef.set({
+        displayName,
+        email,
+        createdAt,
+        ...additionalData
+      })
+    } catch (err) {
+      console.log('Error while creating new user');
+    }
+  }
+
+  return userRef;
+};
 
 export default firebase;

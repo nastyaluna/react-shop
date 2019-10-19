@@ -7,21 +7,34 @@ import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 import Header from './components/header/header.component';
-import { auth } from './firebase/firebase.utils';
-
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    let unsubscribeFromAuth = null;
+    let unsubscribe = null;
 
-    unsubscribeFromAuth = auth.onAuthStateChanged(googleUser => {
-      setUser(googleUser);
+    unsubscribe = auth.onAuthStateChanged(async googleUser => {
+      if (googleUser) {
+        const userRef = await createUserProfileDocument(googleUser);
+
+        userRef.onSnapshot(snapShot => {
+          if (snapShot) {
+            const data = {
+              id: snapShot.id,
+              ...snapShot.data()
+            };
+            setUser(data);
+          }
+        });
+      } else {
+        setUser(null);
+      }
     });
 
-    return () => unsubscribeFromAuth();
-  });
+    return () => unsubscribe();
+  }, []);
 
   return (
       <section className="app">
